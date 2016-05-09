@@ -1,11 +1,30 @@
 <?php
 
-class BasicInspection {
+interface CarService {
+	public function getCost();
+}
+
+class BasicInspection implements CarService {
 
 	public function getCost()
 	{
-		return 19;
+		return 25;
 	}
 }
 
-echo (new BasicInspection())->getCost();
+class OilChange implements CarService {
+
+	protected $carService;
+
+	public function __construct(CarService $carService)
+	{
+		$this->carService = $carService;
+	}
+
+	public function getCost()
+	{
+		return 29 + $this->carService->getCost();
+	}
+}
+
+echo (new OilChange(new BasicInspection()))->getCost();
