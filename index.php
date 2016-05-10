@@ -1,71 +1,15 @@
 <?php
 
-interface CarService {
-	public function getCost();
-	public function getDescription();
-}
+require 'vendor/autoload.php';
 
-class BasicInspection implements CarService {
+use Acme\Book;
 
-	public function getCost()
+class Person {
+	public function read($book)
 	{
-		return 25;
-	}
-
-	public function getDescription()
-	{
-		return 'Basic inspection';
+		$book->open();
+		$book->turnPage();
 	}
 }
 
-class OilChange implements CarService {
-
-	protected $carService;
-
-	public function __construct(CarService $carService)
-	{
-		$this->carService = $carService;
-	}
-
-	public function getCost()
-	{
-		return 29 + $this->carService->getCost();
-	}
-
-	public function getDescription()
-	{
-		return $this->carService->getDescription() . ', and oil change';
-	}
-}
-
-class TireRotation implements CarService {
-
-	protected $carService;
-
-	public function __construct(CarService $carService)
-	{
-		$this->carService = $carService;
-	}
-
-	public function getCost()
-	{
-		return 15 + $this->carService->getCost();
-	}
-
-	public function getDescription()
-	{
-		return $this->carService->getDescription() . ', and a tire rotation';
-	}
-}
-
-$service = new BasicInspection;
-echo $service->getDescription(); 
-echo '<br>';
-
-$service = new TireRotation(new BasicInspection);
-echo $service->getDescription(); 
-echo '<br>';
-
-$service = new OilChange(new TireRotation(new BasicInspection));
-echo $service->getDescription(); 
-
+(new Person)->read(new Book);
