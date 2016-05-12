@@ -5,7 +5,8 @@ require 'vendor/autoload.php';
 use Acme\Book;
 use Acme\BookInterface;
 use Acme\Kindle;
-use Acme\KindleAdapter;
+use Acme\Nook;
+use Acme\eReaderAdapter;
 
 class Person {
 	public function read(BookInterface $book)
@@ -15,6 +16,6 @@ class Person {
 	}
 }
 
-(new Person)->read(new Book);
+(new Person)->read(new eReaderAdapter(new Kindle));
 echo '<br>';
-(new Person)->read(new KindleAdapter(new Kindle));
+(new Person)->read(new eReaderAdapter(new Nook));

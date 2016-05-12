@@ -1,4 +1,6 @@
-<?php  namespace Acme;
+<?php  
+
+namespace Acme;
 
 class Kindle implements eReaderInterface
 {
