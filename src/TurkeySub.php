@@ -2,12 +2,7 @@
 
 class TurkeySub extends Sub
 {
-    public function make()
-    {
-        return $this->layBread()->addLettuce()->addTurkey()->addSauces();
-    }
-
-    public function addTurkey()
+    public function addPrimaryToppings()
     {
         var_dump('add some turkey');
         return $this;
