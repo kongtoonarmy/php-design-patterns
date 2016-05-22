@@ -32,8 +32,9 @@ class LogToXWebService implements Logger {
 }
 
 class App {
-    public function log($data, Logger $logger)
+    public function log($data, Logger $logger = null)
     {
+        $logger = $logger ? : new LogToFile;
         $logger->log($data);
     }
 }
@@ -42,3 +43,4 @@ $app = new App;
 $app->log('Some information here', new LogToXWebService);
 $app->log('Some information here', new LogToFile());
 $app->log('Some information here', new LogToDatabase() );
+$app->log('Some information here');
