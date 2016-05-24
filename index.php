@@ -1,46 +1,73 @@
 <?php
 
-interface Logger {
+abstract class HomeChecker {
 
-    public function log($data);
+    protected $successor;
+
+    public abstract function check(HomeStatus $home);
+
+    public function succeedWith(HomeChecker $successor)
+    {
+        $this->successor = $successor;
+    }
+
+    public function next(HomeStatus $home)
+    {
+        if($this->successor) {
+            $this->successor->check($home);
+        }        
+    }
+}
+ 
+class Locks extends HomeChecker {
+
+    public function check(HomeStatus $home) 
+    {
+        if (!$home->locked) {
+            throw new Exception("The doors are not locked!! Abort abort.");
+        }
+
+        $this->next($home);
+    }    
 }
 
-// Define a family of algorithms
+class Lights extends HomeChecker {
 
-class LogToFile implements Logger {
-
-    public function log($data)
+    public function check(HomeStatus $home)
     {
-        var_dump('Log the data to a file');
+        if (!$home->lightsOff) {
+            throw new Exception("The lights are still on!! Abort abort.");
+        }
+
+        $this->next($home);
+    }
+ 
+}   
+
+class Alarm extends HomeChecker {
+
+    public function check(HomeStatus $home)
+    {
+        if (!$home->alarmOn) {
+            throw new Exception("The alarm has not been set!! Abort abort.");
+        }
+
+        $this->next($home);
     }
 }
 
-class LogToDatabase implements Logger {
-
-    public function log($data)
-    {
-        var_dump('Log the data to the database');
-    }
+class HomeStatus {
+    // You can test by switch the value below to be true/false
+    public $alarmOn = true; // or false
+    public $locked = true; // or false
+    public $lightsOff = true; // or false
 }
 
-class LogToXWebService implements Logger {
+$locks = new Locks;
+$lights = new Lights;
+$alarm = new Alarm;
 
-    public function log($data)
-    {
-        var_dump('Log the data to a Sass site.');
-    }
-}
+$locks->succeedWith($lights);
+$lights->succeedWith($alarm);
 
-class App {
-    public function log($data, Logger $logger = null)
-    {
-        $logger = $logger ? : new LogToFile;
-        $logger->log($data);
-    }
-}
-
-$app = new App;
-$app->log('Some information here', new LogToXWebService);
-$app->log('Some information here', new LogToFile());
-$app->log('Some information here', new LogToDatabase() );
-$app->log('Some information here');
+$locks->check(new HomeStatus);
